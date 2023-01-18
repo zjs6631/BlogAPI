@@ -7,6 +7,8 @@ const BookSchema = new Schema({
     author: {type: String, require: true},
     rating: {type: String},
     review: {type: String},
+    genre: {type: String},
+    dateCompleted: {type: Date},
     img: [{type: String}],
 });
 

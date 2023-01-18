@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 
 const MessageSchema = new Schema({
     message: {type: String, require: true},
-    authorID: {type: Schema.Types.ObjectId, ref: 'User'},
+    authorName: {type: String},
+    authorEmail: {type: String},
 }, {timestamps: true}, //provides .createdAt and .updatedAt to message obj);
 );
 

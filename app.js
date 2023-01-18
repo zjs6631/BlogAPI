@@ -6,15 +6,16 @@ var logger = require('morgan');
 require('./mongoconfig');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+var jwt = require('jsonwebtoken');
+var bodyParser = require('body-parser');
 var app = express();
+const cors = require('cors');
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
+app.use(cors());//enabling cors
 app.use(logger('dev'));
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,7 +36,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send('error');
 });
 
 module.exports = app;
