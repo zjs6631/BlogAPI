@@ -3,12 +3,13 @@ const Message = require("../models/Message");
 const Posts = require("../models/Posts");
 const Shops = require("../models/Shops");
 const User = require("../models/User");
+const Comment = require('../models/Comment')
 
 const async = require("async");
 
 exports.get_index = (req, res, next) =>{
     Posts.find({published: true})
-        .sort({timestamps: 1})
+        .sort({createdAt: 1})
         .limit(6)
         .exec(function (err, post_list){
             //handle error
@@ -24,6 +25,7 @@ exports.get_index = (req, res, next) =>{
 exports.get_books_read = (req, res, next) =>{
     Book.find()
         .sort({dateCompleted: 1})
+        .populate('img')
         .exec(function(err, book_list){
             if(err){
                 return next(err)
@@ -36,6 +38,7 @@ exports.get_books_read = (req, res, next) =>{
 exports.get_books_read_2022 = (req, res, next) =>{
     Book.find()
         .sort({dateCompleted: {$gte: '2022-01-01', $lte: '2022-12-31'}})
+        .populate('img')
         .exec(function(err, book_list){
             if(err){
                 return next(err)
@@ -48,6 +51,7 @@ exports.get_books_read_2022 = (req, res, next) =>{
 exports.get_books_read_2023 = (req, res, next) =>{
     Book.find()
         .sort({dateCompleted: {$gte: '2023-01-01', $lte: '2023-12-31'}})
+        .populate('img')
         .exec(function(err, book_list){
             if(err){
                 return next(err)
@@ -60,6 +64,10 @@ exports.get_books_read_2023 = (req, res, next) =>{
 exports.get_post_list = (req, res, next) =>{
     Posts.find()
         .sort({timestamps: 1})
+        .populate("comments")
+        .populate("books")
+        .populate("img")
+        .populate("category")
         .exec(function(err, post_list){
             if(err){
                 return next(err);
@@ -69,7 +77,12 @@ exports.get_post_list = (req, res, next) =>{
 }
 
 exports.get_post = (req, res, next) =>{
+    
     Posts.findById(req.params.id)
+        .populate("comments")
+        .populate("books")
+        .populate("img")
+        .populate("category")
         .exec(function(err, result){
             if(err){
                 return next(err);
@@ -82,6 +95,8 @@ exports.get_post = (req, res, next) =>{
 exports.get_shop_list = (req, res, next) =>{
     Shops.find()
         .sort({name: 1})
+        .populate("img")
+        .populate("products")
         .exec(function(err, shop_list){
             if(err){
                 return next(err);
