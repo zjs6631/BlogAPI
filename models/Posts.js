@@ -15,7 +15,7 @@ const PostSchema = new Schema({
     {timestamps: true},
 );
 
-//added virtual to link to this specific post
+//added virtual to link to this specific post 
 PostSchema.virtual('url').get(function(){
     return `/blog-posts/${this._id}`
 })

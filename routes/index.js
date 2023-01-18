@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
+var jwt = require('jsonwebtoken');
 
 
 //import controller
@@ -18,7 +19,7 @@ router.get('/about-me/books/2023', indexController.get_books_read_2023);
 
 router.get('/blog-posts', indexController.get_post_list);
 
-router.get('/blog-posts/:id', indexController.get_post);
+router.get('/blog-posts/:id', verifyToken, indexController.get_post);
 
 router.get('/shops', indexController.get_shop_list);
 
@@ -37,8 +38,42 @@ router.post("/login",
     }
     ),
     function(req, res){
-        res.json(req.user)
+        //if it did authenticate then we sign the web token
+        jwt.sign({user: req.user}, 'secretkey', (err, token)=>{
+            if (err){
+                return err;
+            }
+            res.json({
+                token: token
+            })
+        });
       }
   );
+
+  router.post('/blog-posts/:id', verifyToken, postController.create_comment);
+
+
+//FORMAT OF JWT TOKENS
+// Authorization: Bearer <access_token>
+
+
+function verifyToken (req, res, next) {
+    const bearerHeader = req.headers['authorization'];
+    //check if bearer is undefined
+    if(typeof bearerHeader !== 'undefined'){
+        const bearer = bearerHeader.split(' '); //string to array, split by space
+
+        //get token from array
+        const bearerToken = bearer[1];
+
+        //set token
+        req.token = bearerToken;
+        //next middleware
+        next();
+    } else {
+        //forbidden
+        res.sendStatus(403);
+    }
+}
 
 module.exports = router;

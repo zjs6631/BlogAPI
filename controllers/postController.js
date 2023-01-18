@@ -6,6 +6,7 @@ const User = require("../models/User");
 const Comment = require('../models/Comment')
 
 const async = require("async");
+const jwt = require("jsonwebtoken");
 
 const bcrypt = require('bcryptjs');
 var passport = require('passport');
@@ -159,4 +160,37 @@ exports.create_user = [
     },
 
 ]
+
+exports.create_comment = (req, res, next) =>{
+    jwt.verify(req.token, 'secretkey', (err, auth_data) =>{
+        if(err){
+            res.redirect('/login')
+        } else {
+            const comment = new Comment({
+                comment: req.body.comment,
+                authorID: auth_data.user._id,
+                postID: req.params.id,
+            })
+            
+            console.log(req.params.id)
+            console.log(comment.id)
+            Posts.findByIdAndUpdate(req.params.id, {"$push": {"comments": comment.id}},
+            function(err, mongoRes){
+                if(err) console.log(err);
+                
+                console.log(mongoRes);
+            });
+
+            comment.save((err)=>{
+                
+                if(err){
+                    return next(err);
+                }
+                res.redirect(`/blog-posts/${req.params.id}`)
+            })
+            
+            return;
+        }
+    })
+}
 

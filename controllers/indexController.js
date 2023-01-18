@@ -6,6 +6,7 @@ const User = require("../models/User");
 const Comment = require('../models/Comment')
 
 const async = require("async");
+const jwt = require("jsonwebtoken");
 
 exports.get_index = (req, res, next) =>{
     Posts.find({published: true})
@@ -79,16 +80,30 @@ exports.get_post_list = (req, res, next) =>{
 exports.get_post = (req, res, next) =>{
     
     Posts.findById(req.params.id)
-        .populate("comments")
-        .populate("books")
-        .populate("img")
-        .populate("category")
+        .populate('comments')
         .exec(function(err, result){
             if(err){
                 return next(err);
             }
 
-            res.json(result);
+            jwt.verify(req.token, 'secretkey', (err, auth_data) =>{
+                if(err){
+                    console.log(err)
+                    res.json({
+                        message: 'user not logged in',
+                        result
+                    })
+                } else {
+                    res.json({
+                        message: 'user logged in',
+                        auth_data,
+
+                    })
+                    return;
+                }
+            })
+
+            
         })
 }
 
