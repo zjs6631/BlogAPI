@@ -1,0 +1,75 @@
+const Book = require("../models/Book");
+const Message = require("../models/Message");
+const Posts = require("../models/Posts");
+const Shops = require("../models/Shops");
+const User = require("../models/User");
+const Comment = require('../models/Comment')
+
+const async = require("async");
+const jwt = require("jsonwebtoken");
+
+const bcrypt = require('bcryptjs');
+var passport = require('passport');
+
+const {body, validationResult} = require('express-validator');
+
+exports.delete_book = (req, res, next) =>{
+    jwt.verify(req.token, 'secretkey', (err, auth_data)=>{
+        if(err || (typeof auth_data.user.isAdmin === undefined || auth_data.user.isAdmin == false)){
+            res.json(auth_data)
+            return;
+        } else {
+            res.json(auth_data);
+            Book.findByIdAndRemove(req.params.id, function(err, mongoRes){
+                if(err) return next(err);
+                console.log(mongoRes);
+            });
+            res.redirect('/about-me/books');
+            return;
+        }
+    }
+    );
+}
+
+exports.delete_post = (req, res, next) =>{
+    jwt.verify(req.token, 'secretkey', (err, auth_data)=>{
+        if(err || (typeof auth_data.user.isAdmin === undefined || auth_data.user.isAdmin == false)){
+            res.json(auth_data)
+            return;
+        } else {
+            Posts.findByIdAndRemove(req.params.id), function(err, mongoRes){
+                if(err) return next(err);
+                console.log(mongoRes);
+            }
+            Comment.deleteMany({'authorID': req.params.id}, function(err, mongoRes){
+                if(err) return next(err);
+                console.log(mongoRes);
+            })
+
+            res.redirect('/blog-posts');
+        }
+    })
+}
+
+exports.delete_comment = (req, res, next) =>{
+    jwt.verify(req.token, 'secretkey', (err, auth_data)=>{
+        if(err || (typeof auth_data.user.isAdmin === undefined || auth_data.user.isAdmin == false)){
+            console.log('here')
+            res.json(auth_data)
+            return;
+        } else {
+            console.log(req.body.id)
+            Comment.findByIdAndRemove(req.body.id, function(err, mongoRes){
+                if(err) console.log(err);
+                
+                //console.log(mongoRes);
+            });
+            Posts.findByIdAndUpdate(req.params.id, {'$pull': {"comments": req.body.id}}, function(err, mongoRes){
+                if(err) console.log(err);
+                
+                console.log(mongoRes);
+            });
+            res.redirect(`/blog-posts/${req.params.id}`);
+        }
+    });
+}

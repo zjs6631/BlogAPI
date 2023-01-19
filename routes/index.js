@@ -7,11 +7,14 @@ var jwt = require('jsonwebtoken');
 //import controller
 const indexController = require("../controllers/indexController");
 const postController = require('../controllers/postController');
+const deleteController = require('../controllers/deleteController');
 
 /* GET home page. */
 router.get('/', indexController.get_index);
 
 router.get('/about-me/books', indexController.get_books_read );
+
+router.get('/about-me/books/:id', indexController.get_book);
 
 router.get('/about-me/books/2022', indexController.get_books_read_2022);
 
@@ -50,7 +53,13 @@ router.post("/login",
       }
   );
 
-  router.post('/blog-posts/:id', verifyToken, postController.create_comment);
+router.post('/blog-posts/:id', verifyToken, postController.create_comment);
+
+router.delete('/about-me/books/:id', verifyToken,  deleteController.delete_book );
+
+router.delete('/blog-posts/:id', verifyToken, deleteController.delete_post);
+
+router.delete('/blog-posts/:id/comments', verifyToken, deleteController.delete_comment);
 
 
 //FORMAT OF JWT TOKENS

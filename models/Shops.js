@@ -10,4 +10,8 @@ const ShopSchema = new Schema({
     }, {timestamps: true},  
 );
 
+ShopSchema.virtual('url').get(function(){
+    return `/shops/${this._id}`
+})
+
 module.exports = mongoose.model("Shop", ShopSchema);

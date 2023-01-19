@@ -36,6 +36,16 @@ exports.get_books_read = (req, res, next) =>{
         })
 }
 
+exports.get_book = (req, res, next) =>{
+    Book.find(req.params.id)
+        .exec(function(err, book){
+            if(err){
+                return next(err)
+            }
+            res.json(book)
+        });
+}
+
 exports.get_books_read_2022 = (req, res, next) =>{
     Book.find()
         .sort({dateCompleted: {$gte: '2022-01-01', $lte: '2022-12-31'}})
