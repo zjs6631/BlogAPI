@@ -21,7 +21,7 @@ exports.create_post = [
     (req, res, next) =>{
         
         const errors = validationResult(req);
-        console.log(req.body)
+        
         const post = new Posts({
             title: req.body.title,
             body: req.body.body,

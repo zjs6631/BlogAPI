@@ -10,7 +10,7 @@ const jwt = require("jsonwebtoken");
 
 exports.get_index = (req, res, next) =>{
     Posts.find({published: true})
-        .sort({createdAt: 1})
+        .sort({createdAt: -1})
         .limit(6)
         .exec(function (err, post_list){
             //handle error
@@ -18,7 +18,7 @@ exports.get_index = (req, res, next) =>{
                 return next(err);
             }
             //successful, so send the result
-            console.log(post_list)
+            
             res.json(post_list);
          })
 }
