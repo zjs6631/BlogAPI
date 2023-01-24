@@ -5,6 +5,7 @@ const Shops = require("../models/Shops");
 const User = require("../models/User");
 const Comment = require('../models/Comment')
 
+
 const async = require("async");
 const jwt = require("jsonwebtoken");
 
@@ -89,6 +90,28 @@ exports.get_post_list = (req, res, next) =>{
 
 exports.get_post = (req, res, next) =>{
     
+    async.parallel(
+        {
+            post(callback){
+                Posts.findById(req.params.id).exec(callback);
+            },
+            comments(callback){
+                Comment.find({postID: req.params.id}).populate('authorID').exec(callback);
+            },
+        },
+        (err, results) =>{
+            if(err){
+                return next(err);
+            }
+
+            
+
+            res.json(results);
+        }
+    )
+
+
+    /*
     Posts.findById(req.params.id)
         .populate('comments')
         .exec(function(err, result){
@@ -115,6 +138,7 @@ exports.get_post = (req, res, next) =>{
 
             
         })
+        */
 }
 
 exports.get_shop_list = (req, res, next) =>{

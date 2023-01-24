@@ -22,7 +22,7 @@ router.get('/about-me/books/2023', indexController.get_books_read_2023);
 
 router.get('/blog-posts', indexController.get_post_list);
 
-router.get('/blog-posts/:id', verifyToken, indexController.get_post);
+router.get('/blog-posts/:id', indexController.get_post);
 
 router.get('/shops', indexController.get_shop_list);
 
