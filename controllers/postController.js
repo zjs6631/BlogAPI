@@ -162,23 +162,27 @@ exports.create_user = [
 ]
 
 exports.create_comment = (req, res, next) =>{
-    jwt.verify(req.token, 'secretkey', (err, auth_data) =>{
+    let token = JSON.parse(req.headers.authorization.split(' ')[1]);
+    console.log(token);
+    jwt.verify(token, 'secretkey', (err, auth_data) =>{
         if(err){
-            res.redirect('/login')
+            
+            console.log(err);
         } else {
+            console.log(auth_data)
+            console.log(req.body.comment)
+            console.log(req.params.id)
             const comment = new Comment({
                 comment: req.body.comment,
                 authorID: auth_data.user._id,
                 postID: req.params.id,
             })
             
-            console.log(req.params.id)
-            console.log(comment.id)
             Posts.findByIdAndUpdate(req.params.id, {"$push": {"comments": comment.id}},
             function(err, mongoRes){
                 if(err) console.log(err);
                 
-                console.log(mongoRes);
+                
             });
 
             comment.save((err)=>{

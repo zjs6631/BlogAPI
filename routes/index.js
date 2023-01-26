@@ -34,6 +34,12 @@ router.post('/shops/new-shop', postController.create_shop);
 
 router.post('/new-user', postController.create_user);
 
+router.get('/login', verifyToken, (req, res, next) =>{
+    res.redirect('/blog-posts')
+});
+    
+
+
 router.post("/login",
     passport.authenticate("local", {
       failureRedirect: "/login",
@@ -47,9 +53,11 @@ router.post("/login",
                 return err;
             }
             res.json({
+                user: req.user,
                 token: token
             })
-        });
+        })
+        
       }
   );
 
