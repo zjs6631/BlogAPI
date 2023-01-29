@@ -34,7 +34,7 @@ router.post('/shops/new-shop', postController.create_shop);
 
 router.post('/new-user', postController.create_user);
 
-router.get('/login', verifyToken, (req, res, next) =>{
+router.get('/login', (req, res, next) =>{
     res.redirect('/blog-posts')
 });
     
