@@ -162,7 +162,9 @@ exports.create_user = [
 ]
 
 exports.create_comment = (req, res, next) =>{
-    let token = JSON.parse(req.headers.authorization.split(' ')[1]);
+    console.log("made it in call!")
+    console.log(req.headers.authorization.split(' ')[1])
+    let token = req.headers.authorization.split(' ')[1];
     console.log(token);
     jwt.verify(token, 'secretkey', (err, auth_data) =>{
         if(err){
