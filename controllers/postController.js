@@ -197,6 +197,8 @@ exports.create_comment = (req, res, next) =>{
             
             return;
         }
+    }).catch((error)=>{
+        
     })
 }
 
